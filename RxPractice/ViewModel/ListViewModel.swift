@@ -8,14 +8,20 @@
 import Foundation
 import RxSwift
 class ListViewModel:ViewModelType{
+    private var repository:KakaoSearchAPI = KakaoSearchAPI()
     var getList:Observable<[Image]>{
         return repository.getList()
     }
-    private var repository:KakaoSearchAPI = KakaoSearchAPI()
     func searching(queryItem:String){
         repository.searching(queryItem: queryItem)
     }
     func imageLoading(url:String) -> Observable<UIImage>{
         return repository.imageLoading(url: url)
+    }
+    func listCount() -> Int{
+        return repository.getCount()
+    }
+    func next(queryItem:String){
+        repository.searching(queryItem: queryItem, true)
     }
 }

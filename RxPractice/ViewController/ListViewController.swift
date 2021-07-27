@@ -15,6 +15,7 @@ class ListViewController: UIViewController,ViewControllerBindType,UICollectionVi
     var input:String = "사과"
     var isGrid:Bool = false
     var downLoadingCount = 0
+    let backgroundScheduler = ConcurrentDispatchQueueScheduler(queue: DispatchQueue.global())
     @IBOutlet weak var collectionView:UICollectionView!
     @IBOutlet weak var gridCellButton:UIBarButtonItem!
     @IBOutlet weak var refreshButton:UIBarButtonItem!
@@ -26,17 +27,15 @@ class ListViewController: UIViewController,ViewControllerBindType,UICollectionVi
         collectionView.rx.setDelegate(self).disposed(by: rx.disposeBag)
     }
     func bindViewModel() {
-        bindingCell()
+        cellBinding()
         convertButtonBinding()
-        searchBar.rx.text.orEmpty
-            // 1초 기다림
-            .debounce(.milliseconds(1000), scheduler: MainScheduler.instance)
-            // 같은 아이템은 받지 않음
-            .distinctUntilChanged()
-            .subscribe(onNext:{[unowned self] text in
-                self.input = text
-                print("searching ->\(input)")
-                if input != ""{ self.viewModel.searching(queryItem: input) }
+        searchBarBinding()
+        collectionView.rx.willDisplayCell
+            .subscribe(onNext:{[unowned self] evt in
+                print(self.viewModel.listCount(),evt.at.row)
+                if evt.at.row + 1 == self.viewModel.listCount(){
+                    self.viewModel.next(queryItem: self.input)
+                }
             })
             .disposed(by: rx.disposeBag)
         ApplicationNotiCenter.downLoadingCount.addObserver()
@@ -47,6 +46,21 @@ class ListViewController: UIViewController,ViewControllerBindType,UICollectionVi
             .subscribe(onNext:{[unowned self] _ in
                 self.downLoadingCount += 1
                 self.navigationItem.title = String(downLoadingCount)
+            })
+            .disposed(by: rx.disposeBag)
+    }
+    func searchBarBinding(){
+        searchBar.rx.text.orEmpty
+            // 1초 기다림
+            .debounce(.milliseconds(1000), scheduler: MainScheduler.instance)
+            // 같은 아이템은 받지 않음
+            .distinctUntilChanged()
+            .subscribe(onNext:{[unowned self] text in
+                self.input = text
+                if input != ""{
+                    self.viewModel.searching(queryItem: input)
+                    self.view.endEditing(true)
+                }
             })
             .disposed(by: rx.disposeBag)
     }
@@ -67,7 +81,7 @@ class ListViewController: UIViewController,ViewControllerBindType,UICollectionVi
             })
             .disposed(by: rx.disposeBag)
     }
-    func bindingCell(){
+    func cellBinding(){
         viewModel.getList
             .debug()
             .bind(to:collectionView.rx.items){[unowned self] collectionView,row,element in
@@ -77,7 +91,7 @@ class ListViewController: UIViewController,ViewControllerBindType,UICollectionVi
                     // UIImage 바인딩 동기화문제 -> 인스턴스 생성은 subscribe(on:) 을 통하여 url Loading을 백그라운드에서 작업을 하고
                     // UI 바인딩 작업은 observe(on:)에서 작업을 해야함
                     self.viewModel.imageLoading(url: element.imageURL)
-                        .subscribe(on: ConcurrentDispatchQueueScheduler(qos:.background))
+                        .subscribe(on: backgroundScheduler)
                         .observe(on: MainScheduler.instance)
                         .subscribe(onNext:{img in
                             cell.thumbnail.image = img
@@ -88,7 +102,7 @@ class ListViewController: UIViewController,ViewControllerBindType,UICollectionVi
                     // ListCell 일때
                     guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ListCell", for: IndexPath(row: row, section: 0)) as? ListCell else { fatalError() }
                     self.viewModel.imageLoading(url: element.imageURL)
-                        .subscribe(on: ConcurrentDispatchQueueScheduler.init(qos:.background))
+                        .subscribe(on: backgroundScheduler)
                         .observe(on: MainScheduler.instance)
                         .subscribe(onNext:{img in
                             cell.thumbnail.image = img
@@ -102,7 +116,7 @@ class ListViewController: UIViewController,ViewControllerBindType,UICollectionVi
     }
 }
 // UI 관련 메소드
-extension ListViewController{
+extension ListViewController: UIGestureRecognizerDelegate{
     func convertToList(){
         // collectionView layout 정의
         // layout을 세팅해준후 현재 보이는 셀들의 레이아웃을 업데이트 해줌

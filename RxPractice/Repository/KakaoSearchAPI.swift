@@ -24,7 +24,12 @@ class KakaoSearchAPI{
     func getList() -> Observable<[Image]>{
         return images
     }
-    func searching(queryItem:String){
+    func getCount() -> Int{
+        return imageList.count
+    }
+    func searching(queryItem:String,_ next:Bool = false){
+        imageList = []
+        if next { currentSize += 20 }
         httpClient.getJson(path: "/image", params: [
             "query":queryItem,
             "page":currentPage,
@@ -44,9 +49,6 @@ class KakaoSearchAPI{
                 self.images.onError(err)
             })
         .disposed(by: bag)
-    }
-    func nextList(){
-        
     }
     func validCheck() -> Bool{
         if currentSize <= maxSize && currentPage <= maxPage{ return true }
