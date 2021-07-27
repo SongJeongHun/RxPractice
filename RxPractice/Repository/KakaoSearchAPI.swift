@@ -13,9 +13,13 @@ class KakaoSearchAPI{
     private let maxPage = 50
     private let maxSize = 80
     private var currentPage = 1
-    private var currentSize = 10
+    private var currentSize = 20
     private var imageList:[Image] = []
     private let bag = DisposeBag()
+    private let imageLoader = ImageLoader()
+    func imageLoading(url:String) -> Observable<UIImage>{
+        return imageLoader.loadImage(url: url)
+    }
     func getList(queryItem:String) -> Observable<[Image]>{
         let subject = PublishSubject<[Image]>()
         httpClient.getJson(path: "/image", params: [

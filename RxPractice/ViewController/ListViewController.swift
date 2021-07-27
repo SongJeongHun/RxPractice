@@ -23,29 +23,36 @@ class ListViewController: UIViewController,ViewControllerBindType,UICollectionVi
         collectionView.rx.setDelegate(self).disposed(by: rx.disposeBag)
     }
     func bindViewModel() {
+        bindingCell()
+        convertButtonBinding()
+    }
+    func convertButtonBinding(){
         // Grid <-> List 셀전환 1초 쓰로틀
         gridCellButton.rx.tap
             .throttle((.milliseconds(1000)), scheduler: MainScheduler.instance)
-            .subscribe(onNext:{ _ in
+            .subscribe(onNext:{[unowned self] _ in
                 if self.isGrid{
+                    self.gridCellButton.title = "Grid"
                     self.isGrid = false
                     self.convertToList()
-                    
                 }else{
+                    self.gridCellButton.title = "List"
                     self.isGrid = true
                     self.convertToGrid()
                 }
             })
             .disposed(by: rx.disposeBag)
+    }
+    func bindingCell(){
         viewModel.getList(queryItem: input)
-            .bind(to:collectionView.rx.items){collectionView,row,element in
+            .bind(to:collectionView.rx.items){[unowned self] collectionView,row,element in
                 // GridCell 일때
                 if self.isGrid{
                     guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GridCell", for: IndexPath(row: row, section: 0)) as? GridCell else { fatalError() }
-                    // UIImage 바인딩 동기화문제 -> 인스턴스 생성은 ConcurrentDispatchQueueScheduler 을 통하여 url Loading을 백그라운드에서 작업을 하고
-                    // UI 바인딩 작업은 MainScheduler에서 작업을 해야함
-                    ImageLoader.loadImage(url: element.imageURL)
-                        .subscribe(on: ConcurrentDispatchQueueScheduler.init(qos:.background))
+                    // UIImage 바인딩 동기화문제 -> 인스턴스 생성은 subscribe(on:) 을 통하여 url Loading을 백그라운드에서 작업을 하고
+                    // UI 바인딩 작업은 observe(on:)에서 작업을 해야함
+                    self.viewModel.imageLoading(url: element.imageURL)
+                        .subscribe(on: ConcurrentDispatchQueueScheduler(qos:.background))
                         .observe(on: MainScheduler.instance)
                         .subscribe(onNext:{img in
                             cell.thumbnail.image = img
@@ -55,7 +62,7 @@ class ListViewController: UIViewController,ViewControllerBindType,UICollectionVi
                 }else{
                     // ListCell 일때
                     guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ListCell", for: IndexPath(row: row, section: 0)) as? ListCell else { fatalError() }
-                    ImageLoader.loadImage(url: element.imageURL)
+                    self.viewModel.imageLoading(url: element.imageURL)
                         .subscribe(on: ConcurrentDispatchQueueScheduler.init(qos:.background))
                         .observe(on: MainScheduler.instance)
                         .subscribe(onNext:{img in
@@ -84,7 +91,9 @@ extension ListViewController{
     }
     func convertToGrid(){
         let flowLayout = UICollectionViewFlowLayout()
-        flowLayout.itemSize = CGSize(width: 60, height: 60)
+        flowLayout.itemSize = CGSize(width: UIScreen.main.bounds.width / 3, height: UIScreen.main.bounds.width / 3)
+        flowLayout.minimumLineSpacing = 0.0
+        flowLayout.minimumInteritemSpacing = 0.0
         collectionView.setCollectionViewLayout(flowLayout, animated: true)
         collectionView.performBatchUpdates {[unowned self] in
             let visibleItems = self.collectionView.indexPathsForVisibleItems ?? []
