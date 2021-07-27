@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="KD7-lE-Jf2">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="collection view cell content view" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Navigation Controller-->
+        <scene sceneID="Tbc-52-Ckv">
+            <objects>
+                <navigationController storyboardIdentifier="listNav" id="KD7-lE-Jf2" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="vxU-Qy-yNN">
+                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="j7X-JE-afU" kind="relationship" relationship="rootViewController" id="09N-JG-hRS"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="gr4-Uz-e1B" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-155" y="468"/>
+        </scene>
+        <!--ListViewController-->
+        <scene sceneID="Kjk-km-i8B">
+            <objects>
+                <viewController storyboardIdentifier="listVC" title="ListViewController" id="j7X-JE-afU" customClass="ListViewController" customModule="RxPractice" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="nbU-S1-eeN">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <searchBar contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="KXp-9X-Ytx">
+                                <rect key="frame" x="0.0" y="88" width="414" height="51"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </searchBar>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="1bH-od-B3V">
+                                <rect key="frame" x="0.0" y="139" width="414" height="757"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="TJ9-jm-hJ8">
+                                    <size key="itemSize" width="399" height="55"/>
+                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                </collectionViewFlowLayout>
+                                <cells>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="ListCell" id="5td-ll-X1k" customClass="ListCell" customModule="RxPractice" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="0.0" width="129.5" height="55"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="Zap-g1-uzM">
+                                            <rect key="frame" x="0.0" y="0.0" width="129.5" height="55"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="wL8-0f-2zg">
+                                                    <rect key="frame" x="10" y="0.0" width="60" height="55"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="60" id="O9W-3A-HDx"/>
+                                                    </constraints>
+                                                </imageView>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gxi-t7-1xp">
+                                                    <rect key="frame" x="78" y="17" width="41.5" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="bottom" secondItem="wL8-0f-2zg" secondAttribute="bottom" id="1od-c1-hxF"/>
+                                                <constraint firstAttribute="trailing" secondItem="gxi-t7-1xp" secondAttribute="trailing" constant="10" id="2Ub-tJ-Krf"/>
+                                                <constraint firstItem="wL8-0f-2zg" firstAttribute="top" secondItem="Zap-g1-uzM" secondAttribute="top" id="AME-tJ-hPX"/>
+                                                <constraint firstItem="gxi-t7-1xp" firstAttribute="top" secondItem="Zap-g1-uzM" secondAttribute="top" constant="17" id="PLQ-TI-43L"/>
+                                                <constraint firstItem="wL8-0f-2zg" firstAttribute="leading" secondItem="Zap-g1-uzM" secondAttribute="leading" constant="10" id="WPC-Kj-Ozy"/>
+                                                <constraint firstItem="gxi-t7-1xp" firstAttribute="leading" secondItem="wL8-0f-2zg" secondAttribute="trailing" constant="8" symbolic="YES" id="nKK-Lt-wwd"/>
+                                                <constraint firstAttribute="bottom" secondItem="gxi-t7-1xp" secondAttribute="bottom" constant="17" id="sXp-Z3-cKg"/>
+                                            </constraints>
+                                        </collectionViewCellContentView>
+                                        <connections>
+                                            <outlet property="source" destination="gxi-t7-1xp" id="CIS-Or-fbr"/>
+                                            <outlet property="thumbnail" destination="wL8-0f-2zg" id="JlF-4W-igp"/>
+                                        </connections>
+                                    </collectionViewCell>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="GridCell" id="bH2-Tp-uxZ" customClass="GridCell" customModule="RxPractice" customModuleProvider="target">
+                                        <rect key="frame" x="139.5" y="0.0" width="60" height="55"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="9cz-MM-a2j">
+                                            <rect key="frame" x="0.0" y="0.0" width="60" height="55"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <subviews>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="e0r-jm-2fy">
+                                                    <rect key="frame" x="0.0" y="0.0" width="60" height="55"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="60" id="Yla-cH-5r0"/>
+                                                    </constraints>
+                                                </imageView>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="e0r-jm-2fy" firstAttribute="top" secondItem="9cz-MM-a2j" secondAttribute="top" id="8mT-dq-ePi"/>
+                                                <constraint firstAttribute="trailing" secondItem="e0r-jm-2fy" secondAttribute="trailing" id="BMh-jB-ibd"/>
+                                                <constraint firstItem="e0r-jm-2fy" firstAttribute="leading" secondItem="9cz-MM-a2j" secondAttribute="leading" id="Efk-4D-HiK"/>
+                                                <constraint firstAttribute="bottom" secondItem="e0r-jm-2fy" secondAttribute="bottom" id="HPr-h6-wLL"/>
+                                            </constraints>
+                                        </collectionViewCellContentView>
+                                        <connections>
+                                            <outlet property="thumbnail" destination="e0r-jm-2fy" id="xh6-kt-5mT"/>
+                                        </connections>
+                                    </collectionViewCell>
+                                </cells>
+                            </collectionView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="RFR-N1-NGK"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstAttribute="bottom" secondItem="1bH-od-B3V" secondAttribute="bottom" id="3UF-vA-FQQ"/>
+                            <constraint firstItem="1bH-od-B3V" firstAttribute="trailing" secondItem="RFR-N1-NGK" secondAttribute="trailing" id="Mrw-Wn-3HG"/>
+                            <constraint firstItem="1bH-od-B3V" firstAttribute="top" secondItem="KXp-9X-Ytx" secondAttribute="bottom" id="Rje-YI-4aL"/>
+                            <constraint firstItem="KXp-9X-Ytx" firstAttribute="top" secondItem="RFR-N1-NGK" secondAttribute="top" id="TMo-cV-OM2"/>
+                            <constraint firstItem="KXp-9X-Ytx" firstAttribute="leading" secondItem="RFR-N1-NGK" secondAttribute="leading" id="YMY-Pm-IjE"/>
+                            <constraint firstItem="KXp-9X-Ytx" firstAttribute="trailing" secondItem="RFR-N1-NGK" secondAttribute="trailing" id="fnI-Ac-3nv"/>
+                            <constraint firstItem="1bH-od-B3V" firstAttribute="leading" secondItem="RFR-N1-NGK" secondAttribute="leading" id="oZN-nc-JTf"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="EgB-Z4-Dh3">
+                        <barButtonItem key="leftBarButtonItem" title="Refresh" id="6sI-i2-pmx"/>
+                        <barButtonItem key="rightBarButtonItem" title="Grid" id="GzM-21-TGR"/>
+                    </navigationItem>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
+                    <connections>
+                        <outlet property="collectionView" destination="1bH-od-B3V" id="XRe-nj-sn9"/>
+                        <outlet property="gridCellButton" destination="GzM-21-TGR" id="P7G-aa-v06"/>
+                        <outlet property="refreshButton" destination="6sI-i2-pmx" id="pk3-Ew-sho"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Mnn-8p-GWS" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="595.6521739130435" y="466.74107142857139"/>
+        </scene>
+    </scenes>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>
