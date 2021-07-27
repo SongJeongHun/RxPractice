@@ -131,6 +131,7 @@
                         <outlet property="collectionView" destination="1bH-od-B3V" id="XRe-nj-sn9"/>
                         <outlet property="gridCellButton" destination="GzM-21-TGR" id="P7G-aa-v06"/>
                         <outlet property="refreshButton" destination="6sI-i2-pmx" id="pk3-Ew-sho"/>
+                        <outlet property="searchBar" destination="KXp-9X-Ytx" id="OEo-A6-mDq"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Mnn-8p-GWS" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

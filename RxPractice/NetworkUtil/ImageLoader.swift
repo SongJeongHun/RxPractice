@@ -21,6 +21,7 @@ class ImageLoader{
         if !fileManager.fileExists(atPath:filePath.path){
             //Download URL
             print("download URL")
+            ApplicationNotiCenter.downLoadingCount.post()
             guard let imageData = try? Data(contentsOf: url) else { return urlImage }
             urlImage = UIImage(data:imageData)
             self.setCacheObj(url: url, img: urlImage!)

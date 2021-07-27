@@ -15,13 +15,16 @@ class KakaoSearchAPI{
     private var currentPage = 1
     private var currentSize = 20
     private var imageList:[Image] = []
+    lazy private var images = BehaviorSubject<[Image]>(value: imageList)
     private let bag = DisposeBag()
     private let imageLoader = ImageLoader()
     func imageLoading(url:String) -> Observable<UIImage>{
         return imageLoader.loadImage(url: url)
     }
-    func getList(queryItem:String) -> Observable<[Image]>{
-        let subject = PublishSubject<[Image]>()
+    func getList() -> Observable<[Image]>{
+        return images
+    }
+    func searching(queryItem:String){
         httpClient.getJson(path: "/image", params: [
             "query":queryItem,
             "page":currentPage,
@@ -29,19 +32,18 @@ class KakaoSearchAPI{
         ],apikey:apiKey)
             .subscribe(onNext:{[unowned self] data in
                 let dict = data as! [String:Any]
-                let docs = dict["documents"] as! Array<Any>
+                let docs = dict["documents"] as? Array<Any> ?? []
                 for i in docs{
                     let result = i as! [String:Any]
                     let sourceURL = result["doc_url"] as! String
                     let thumbnailURL = result["thumbnail_url"] as! String
                     imageList.append(Image(sourceURL: sourceURL, imageURL: thumbnailURL))
                 }
-                subject.onNext(imageList)
-            },onError:{err in
-                subject.onError(err)
+                self.images.onNext(imageList)
+            },onError:{[unowned self]err in
+                self.images.onError(err)
             })
         .disposed(by: bag)
-        return subject
     }
     func nextList(){
         

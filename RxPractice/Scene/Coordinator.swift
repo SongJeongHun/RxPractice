@@ -38,9 +38,7 @@ class Coordinator:SceneCoordinatorType{
                 break
             }
             // UINavigiationController의 Close는 Swift에서 구현 되어있는 매소드이기 때문에 UINavigationController.close 실행시 수동으로 currentVC 변경
-            // Closure 에서 순환 참조를 끊어주기 위한 무소유 참조[unowned self] or 약한 참조[weak self] 사용 -> memory leak 방지
-            // 둘다 주소값을 참조하지만 참조 카운트가 올라가지 않음 단, 약한 참조는 옵셔널 값을 가지지만 무소유 참조는 옵셔널 값이 아님
-            // -> 따라서 무소유 참조를 사용할 경우 피참조 변수값이 먼저 해제(nil)가 될 경우 참조한 변수는 메모리 해제가 안됨(nil 값을 가질 수 없기 때문에) 또한 값접근시 해당 주소는 해제 되어있는 상태이므로 오류 발생
+            
             nav.rx.willShow
                 .subscribe(onNext:{[unowned self] evt in self.currentVC = evt.viewController.parent! })
                 .disposed(by: bag)

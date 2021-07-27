@@ -14,17 +14,41 @@ class ListViewController: UIViewController,ViewControllerBindType,UICollectionVi
     var viewModel:ListViewModel!
     var input:String = "사과"
     var isGrid:Bool = false
+    var downLoadingCount = 0
     @IBOutlet weak var collectionView:UICollectionView!
     @IBOutlet weak var gridCellButton:UIBarButtonItem!
     @IBOutlet weak var refreshButton:UIBarButtonItem!
+    @IBOutlet weak var searchBar:UISearchBar!
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.navigationItem.title = String(downLoadingCount)
         convertToList()
         collectionView.rx.setDelegate(self).disposed(by: rx.disposeBag)
     }
     func bindViewModel() {
         bindingCell()
         convertButtonBinding()
+        searchBar.rx.text.orEmpty
+            // 1초 기다림
+            .debounce(.milliseconds(1000), scheduler: MainScheduler.instance)
+            // 같은 아이템은 받지 않음
+            .distinctUntilChanged()
+            .subscribe(onNext:{[unowned self] text in
+                self.input = text
+                print("searching ->\(input)")
+                if input != ""{ self.viewModel.searching(queryItem: input) }
+            })
+            .disposed(by: rx.disposeBag)
+        ApplicationNotiCenter.downLoadingCount.addObserver()
+            .observe(on: MainScheduler.instance)
+            // Closure 에서 순환 참조를 끊어주기 위한 무소유 참조[unowned self] or 약한 참조[weak self] 사용 -> memory leak 방지
+            // 둘다 주소값을 참조하지만 참조 카운트가 올라가지 않음 단, 약한 참조는 옵셔널 값을 가지지만 무소유 참조는 옵셔널 값이 아님
+            // -> 따라서 무소유 참조를 사용할 경우 피참조 변수값이 먼저 해제(nil)가 될 경우 참조한 변수는 메모리 해제가 안됨(nil 값을 가질 수 없기 때문에) 또한 값접근시 해당 주소는 해제 되어있는 상태이므로 오류 발생
+            .subscribe(onNext:{[unowned self] _ in
+                self.downLoadingCount += 1
+                self.navigationItem.title = String(downLoadingCount)
+            })
+            .disposed(by: rx.disposeBag)
     }
     func convertButtonBinding(){
         // Grid <-> List 셀전환 1초 쓰로틀
@@ -44,7 +68,8 @@ class ListViewController: UIViewController,ViewControllerBindType,UICollectionVi
             .disposed(by: rx.disposeBag)
     }
     func bindingCell(){
-        viewModel.getList(queryItem: input)
+        viewModel.getList
+            .debug()
             .bind(to:collectionView.rx.items){[unowned self] collectionView,row,element in
                 // GridCell 일때
                 if self.isGrid{
