@@ -10,4 +10,5 @@ pod 'RxSwift'
 pod 'RxCocoa'
 pod 'NSObject+Rx'
 pod 'Alamofire'
+pod 'Action'
 end

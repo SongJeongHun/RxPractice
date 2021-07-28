@@ -20,7 +20,6 @@ class ImageLoader{
         filePath.appendPathComponent(url.lastPathComponent)
         if !fileManager.fileExists(atPath:filePath.path){
             //Download URL
-            print("download URL")
             ApplicationNotiCenter.downLoadingCount.post()
             guard let imageData = try? Data(contentsOf: url) else { return urlImage }
             urlImage = UIImage(data:imageData)
@@ -28,7 +27,6 @@ class ImageLoader{
             self.fileManager.createFile(atPath: filePath.path,contents: imageData, attributes: nil)
         }else{
             //Disk Cache
-            print("disk Cache")
             guard let imageData = try? Data(contentsOf: filePath) else { return nil }
             guard let image = UIImage(data:imageData) else { return nil }
             return image

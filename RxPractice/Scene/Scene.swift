@@ -10,7 +10,7 @@ import UIKit
 import RxSwift
 enum Scene{
     case list(ListViewModel)
-    case detail(DetailViewModel)
+    case detail(URL)
 }
 extension Scene{
     //Scene별 ViewController 초기화 및 ViewModel 바인딩
@@ -25,8 +25,9 @@ extension Scene{
             listVC.bind(viewModel: listViewModel)
             return listNav
         // DetailViewController 초기화 및 바인딩
-        case .detail(let detailViewModel):
-            guard let detailVC = storyboard.instantiateViewController(identifier: "detail") as? UIViewController else { fatalError() }
+        case .detail(let url):
+            guard let detailVC = storyboard.instantiateViewController(identifier: "detail") as? DetailViewController else { fatalError() }
+            detailVC.webURL = url
             return detailVC
         }
     }

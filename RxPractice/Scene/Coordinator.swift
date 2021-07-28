@@ -33,8 +33,9 @@ class Coordinator:SceneCoordinatorType{
         // 푸쉬 처리
         case .push:
             // 현재 VC의 NavigationController 존재 여부 확인
-            guard let nav = currentVC.children.first as? UINavigationController else {
+            guard let nav = currentVC as? UINavigationController else {
                 subject.onError(TransitionError.naviMissing)
+                print("currentVC -> \(currentVC)")
                 break
             }
             // UINavigiationController의 Close는 Swift에서 구현 되어있는 매소드이기 때문에 UINavigationController.close 실행시 수동으로 currentVC 변경

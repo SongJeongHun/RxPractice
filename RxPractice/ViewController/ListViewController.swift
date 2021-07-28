@@ -24,20 +24,15 @@ class ListViewController: UIViewController,ViewControllerBindType,UICollectionVi
         super.viewDidLoad()
         self.navigationItem.title = String(downLoadingCount)
         convertToList()
+        addRefreshController()
         collectionView.rx.setDelegate(self).disposed(by: rx.disposeBag)
     }
     func bindViewModel() {
         cellBinding()
         convertButtonBinding()
         searchBarBinding()
-        collectionView.rx.willDisplayCell
-            .subscribe(onNext:{[unowned self] evt in
-                print(self.viewModel.listCount(),evt.at.row)
-                if evt.at.row + 1 == self.viewModel.listCount(){
-                    self.viewModel.next(queryItem: self.input)
-                }
-            })
-            .disposed(by: rx.disposeBag)
+        scrollLoadBinding()
+        transition()
         ApplicationNotiCenter.downLoadingCount.addObserver()
             .observe(on: MainScheduler.instance)
             // Closure 에서 순환 참조를 끊어주기 위한 무소유 참조[unowned self] or 약한 참조[weak self] 사용 -> memory leak 방지
@@ -46,6 +41,15 @@ class ListViewController: UIViewController,ViewControllerBindType,UICollectionVi
             .subscribe(onNext:{[unowned self] _ in
                 self.downLoadingCount += 1
                 self.navigationItem.title = String(downLoadingCount)
+            })
+            .disposed(by: rx.disposeBag)
+    }
+    func scrollLoadBinding(){
+        collectionView.rx.willDisplayCell
+            .subscribe(onNext:{[unowned self] evt in
+                if evt.at.row + 1 == self.viewModel.listCount(){
+                    self.viewModel.next(queryItem: self.input)
+                }
             })
             .disposed(by: rx.disposeBag)
     }
@@ -114,6 +118,14 @@ class ListViewController: UIViewController,ViewControllerBindType,UICollectionVi
             }
             .disposed(by: rx.disposeBag)
     }
+    func transition(){
+        collectionView.rx.modelSelected(Image.self)
+            .do(onNext:{t in
+                print(t)
+            })
+            .bind(to:viewModel.detailAction.inputs)
+            .disposed(by: rx.disposeBag)
+    }
 }
 // UI 관련 메소드
 extension ListViewController: UIGestureRecognizerDelegate{
@@ -138,6 +150,14 @@ extension ListViewController: UIGestureRecognizerDelegate{
             let visibleItems = self.collectionView.indexPathsForVisibleItems ?? []
             self.collectionView.reloadItems(at: visibleItems)
         }
+    }
+    func addRefreshController(){
+        collectionView.refreshControl = UIRefreshControl()
+        collectionView.refreshControl?.addTarget(self, action: #selector(previous), for: .valueChanged)
+    }
+    @IBAction func previous(){
+        viewModel.previous(queryItem: input)
+        collectionView.refreshControl?.endRefreshing()
     }
 }
 class ListCell:UICollectionViewCell{
