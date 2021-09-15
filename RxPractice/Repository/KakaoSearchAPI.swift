@@ -8,7 +8,7 @@
 import Foundation
 import RxSwift
 class KakaoSearchAPI{
-    private let apiKey:String = "6f810a6d493ff8aad7b7184b6c7bc136"
+    private let apiKey:String = "MYAPI"
     private let httpClient = HttpClient(baseURL: "https://dapi.kakao.com/v2/search")
     private let maxPage = 50
     private let maxSize = 80
